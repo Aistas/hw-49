@@ -18,31 +18,38 @@ const createItems = (): CellType[] => {
 const Board: React.FC = () => {
     const [items, setItems] = useState<CellType[]>(createItems());
     const [tries, setTries] = useState<number>(0);
+    const [found, setFound] = useState<boolean>(false);
 
     const handleClick = (index: number) => {
-        if (items[index].clicked) return;
+        if (items[index].clicked || found) return;
 
         const newItems = [...items];
         newItems[index].clicked = true;
         setItems(newItems);
         setTries(tries + 1);
+
+        if (newItems[index].hasItem) {
+            setFound(true);
+        }
     };
 
     const handleReset = () => {
         setItems(createItems());
         setTries(0);
+        setFound(false);
     };
 
     return (
-        <div>
+        <>
             <div className="board">
                 {items.map((cell, index) => (
                     <Cell key={index} cell={cell} onClick={() => handleClick(index)} />
                 ))}
             </div>
             <Tries count={tries} />
+            {found && <div>Element found!</div>}
             <ResetButton onReset={handleReset} />
-        </div>
+        </>
     );
 };
 
